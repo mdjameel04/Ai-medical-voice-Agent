@@ -2,6 +2,7 @@
 import { db } from "@/config/db";
 import { SessionChartTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 import { date } from "drizzle-orm/mysql-core";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid';
@@ -21,9 +22,22 @@ const SessionId=uuidv4()
         createdOn : (new Date()).toString()
         //@ts-ignore
     }).returning({SessionChartTable})
-return NextResponse.json(result)
+return NextResponse.json(result[0].SessionChartTable)
 
    } catch (e) {
     return NextResponse.json(e)
    }
+}
+
+
+export async function GET(req:NextRequest) {
+    const {searchParams} = new URL(req.url);
+    const sessionId= searchParams.get('sessionId');
+    const user= await currentUser();
+
+    const result = await db.select().from(SessionChartTable)
+    //@ts-ignore      
+    .where(eq(SessionChartTable.SessionId,sessionId))
+
+      return NextResponse.json(result[0])
 }

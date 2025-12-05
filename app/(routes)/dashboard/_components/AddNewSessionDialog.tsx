@@ -16,13 +16,15 @@ import axios from 'axios';
 import { doctorAgent } from './DoctorAgentCard';
 import { ArrowRight,  Loader2 } from 'lucide-react';
 import SuggestDoctorCard from './SuggestDoctorCard';
+import { useRouter } from 'next/navigation';
+
 
 function AddNewSessionDialog() {
     const [note, setnote] = useState<string>();
     const [loading, setloading] = useState(false);
   const [suggestedDoctor, setSuggestedDoctor] = useState<doctorAgent[]>();
 const [SelectedDoctor, setSelectedDoctor] = useState<doctorAgent>();
-
+const router = useRouter()
     const OnClickNext = async () => {
         setloading(true)
         const result = await axios.post('/api/suggest-doctors', {
@@ -41,8 +43,11 @@ const [SelectedDoctor, setSelectedDoctor] = useState<doctorAgent>();
             notes:note,
             SelectedDoctor:SelectedDoctor
         })
+        console.log(result.data)
         if(result.data?.sessionId){
             console.log(result.data.sessionId)
+            // Route new Conversation Screen 
+          router.push('/dashboard/medical-agent/'+result.data.sessionId )   
         }
         setloading(false)
     }
@@ -71,7 +76,9 @@ const [SelectedDoctor, setSelectedDoctor] = useState<doctorAgent>();
                                {/* suggested Doctors */}
                             {suggestedDoctor.map((doctor,index)=>(
                 <SuggestDoctorCard doctorAgent={doctor} key={index}
-                setSelectedDoctor={()=>setSelectedDoctor(doctor)}/>
+                setSelectedDoctor={()=>setSelectedDoctor(doctor)}
+                //@ts-ignore
+                SelectedDoctor={setSelectedDoctor}/>
                             ))}
                                 </div>
                                 </div>}
@@ -85,8 +92,8 @@ const [SelectedDoctor, setSelectedDoctor] = useState<doctorAgent>();
                  {!suggestedDoctor?   <Button disabled={!note || loading} onClick={() => OnClickNext()}>
 
                         Next{loading ?<Loader2 className='animate-spin'/> : <ArrowRight/>} </Button>
-                    :<Button onClick={()=>onStartConsultation()}> Start Consultation</Button>}
-                    
+                    :<Button disabled={loading || !SelectedDoctor}   onClick={()=>onStartConsultation()}> Start Consultation</Button>}
+                    {loading ?<Loader2 className='animate-spin'/> : <ArrowRight/>}
                 </DialogContent>
             </Dialog>
         </div>
