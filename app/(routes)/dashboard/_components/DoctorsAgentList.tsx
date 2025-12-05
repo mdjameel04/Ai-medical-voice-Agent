@@ -1,5 +1,4 @@
 import { AIDoctorAgents } from '@/shared/list'
-import { div } from 'motion/react-client'
 import React from 'react'
 import DoctorAgentCard from './DoctorAgentCard'
 
