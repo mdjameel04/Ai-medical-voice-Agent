@@ -33,8 +33,18 @@ const [SelectedDoctor, setSelectedDoctor] = useState<doctorAgent>();
     setloading(false)
     }
   
-    const onStartConsultation=()=>{
+    const onStartConsultation= async()=>{
+     
+    setloading(true)
         //save all info to database
+        const result = await axios.post('/api/session-chat',{
+            notes:note,
+            SelectedDoctor:SelectedDoctor
+        })
+        if(result.data?.sessionId){
+            console.log(result.data.sessionId)
+        }
+        setloading(false)
     }
     return (
         <div>
