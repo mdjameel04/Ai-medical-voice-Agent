@@ -13,13 +13,16 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { DialogClose } from '@radix-ui/react-dialog';
 import axios from 'axios';
-import DoctorAgentCard, { doctorAgent } from './DoctorAgentCard';
-import { ArrowRight, Loader, Loader2 } from 'lucide-react';
+import { doctorAgent } from './DoctorAgentCard';
+import { ArrowRight,  Loader2 } from 'lucide-react';
+import SuggestDoctorCard from './SuggestDoctorCard';
 
 function AddNewSessionDialog() {
     const [note, setnote] = useState<string>();
     const [loading, setloading] = useState(false);
   const [suggestedDoctor, setSuggestedDoctor] = useState<doctorAgent[]>();
+const [SelectedDoctor, setSelectedDoctor] = useState<doctorAgent>();
+
     const OnClickNext = async () => {
         setloading(true)
         const result = await axios.post('/api/suggest-doctors', {
@@ -29,7 +32,10 @@ function AddNewSessionDialog() {
     setSuggestedDoctor(result.data)
     setloading(false)
     }
-
+  
+    const onStartConsultation=()=>{
+        //save all info to database
+    }
     return (
         <div>
             <Dialog>
@@ -48,11 +54,16 @@ function AddNewSessionDialog() {
                                     className='h-[200px]'
                                     onChange={(e) => setnote(e.target.value)}
                                 />
-                            </div>: <div className='grid grid-cols-3 gap-3'>
+                            </div>: 
+                            <div>
+                                <h2> Select the Doctor</h2>
+                            <div className='grid grid-cols-3 gap-3'>
                                {/* suggested Doctors */}
                             {suggestedDoctor.map((doctor,index)=>(
-                <DoctorAgentCard doctorAgent={doctor} key={index}/>
+                <SuggestDoctorCard doctorAgent={doctor} key={index}
+                setSelectedDoctor={()=>setSelectedDoctor(doctor)}/>
                             ))}
+                                </div>
                                 </div>}
                         </DialogDescription>
                     </DialogHeader>
@@ -64,7 +75,7 @@ function AddNewSessionDialog() {
                  {!suggestedDoctor?   <Button disabled={!note || loading} onClick={() => OnClickNext()}>
 
                         Next{loading ?<Loader2 className='animate-spin'/> : <ArrowRight/>} </Button>
-                    :<Button> Start Consultation</Button>}
+                    :<Button onClick={()=>onStartConsultation()}> Start Consultation</Button>}
                     
                 </DialogContent>
             </Dialog>
