@@ -3,7 +3,7 @@ import { db } from "@/config/db";
 import { SessionChartTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
-import { date } from "drizzle-orm/mysql-core";
+
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid';
 export async function   POST(req:NextRequest){

@@ -10,7 +10,7 @@ useEffect(()=>{
     sessionId&& GetSessionDetails();
 },[sessionId  ])
  const  GetSessionDetails = async()=>{
-    const result = await axios.get('/api/session-chat?sessionId+'+sessionId)
+    const result = await axios.get('/api/session-chat?sessionId=' + sessionId)
     console.log(result.data)
  }
   return (
